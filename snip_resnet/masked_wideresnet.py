@@ -9,19 +9,9 @@ import masked_layers as layers
 import sys
 import numpy as np
 
-__all__ = ['teacher_wideresnet', 'student_wideresnet']
-teacher_options = {'widen_factor':12, 'depth':46, 'dropout_rate':0.3, 'num_classes':100}
-student_options = {'widen_factor':8, 'depth':22, 'dropout_rate':0.3, 'num_classes':100}
-
-baseline_options = {'widen_factor':1, 'depth':22, 'dropout_rate':0.3, 'num_classes':100}
-baseline_dense_options = {'widen_factor':2, 'depth':22, 'dropout_rate':0.3, 'num_classes':100}
-
-
-#TODO: Some of the things are not equal to the model definition (from the authors)
-# which is here: https://github.com/szagoruyko/functional-zoo/blob/master/wide-resnet-50-2-export.ipynb
+options = {'widen_factor':12, 'depth':46, 'dropout_rate':0.3, 'num_classes':100}
 
 def conv3x3(in_planes, out_planes, stride=1):
-    #TODO: Authors use, in their conv2d a padding=0 by default if I am not mistaken
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=True)
 
 def conv_init(m):
@@ -66,7 +56,7 @@ class Wide_ResNet(nn.Module):
 
         nStages = [16, 16*k, 32*k, 64*k]
 
-        self.conv1 = conv3x3(3,nStages[0]) #TODO: authors use stride=2, padding=3 in first convolution
+        self.conv1 = conv3x3(3,nStages[0])
         self.layer1 = self._wide_layer(wide_basic, nStages[1], n, dropout_rate, stride=1)
         self.layer2 = self._wide_layer(wide_basic, nStages[2], n, dropout_rate, stride=2)
         self.layer3 = self._wide_layer(wide_basic, nStages[3], n, dropout_rate, stride=2)
@@ -85,7 +75,7 @@ class Wide_ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        out = self.conv1(x) #TODO: after first layer they use relu and maxpool2d with parameters 3, 2, 1
+        out = self.conv1(x)
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
@@ -97,18 +87,6 @@ class Wide_ResNet(nn.Module):
         return out
 
 
-def teacher_wideresnet():
-    model = Wide_ResNet(**teacher_options)
-    return model
-
-def baseline_wideresnet():
-    model = Wide_ResNet(**baseline_options)
-    return model
-
-def baseline_2x_wideresnet():
-    model = Wide_ResNet(**baseline_dense_options)
-    return model
-
-def student_wideresnet():
-    model = Wide_ResNet(**student_options)
+def wideresnet():
+    model = Wide_ResNet(**options)
     return model
