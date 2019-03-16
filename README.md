@@ -1,1 +1,1 @@
-ML course 2019: prinning project
+ML course 2019: prunning project
