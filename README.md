@@ -1,1 +1,1 @@
-ML course 2019: prunning project
+***ML Project on reproducing SNIP and Fisher sparsification methods***
